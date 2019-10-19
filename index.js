@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
 
-const notes = [
+let notes = [
   {
     name:"George",
     number: "611",
@@ -42,6 +42,12 @@ app.get('/api/persons/:id', (request, response) => {
     response.status(404).end()
 })
 
+app.delete('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const note = notes.find(n => n.id === id)
+    notes = notes.filter(n => n.id !== note.id)
+    response.status(204).end()
+})
 
 
 app.listen(PORT,() => console.log(`Listening on port ${PORT}`))
