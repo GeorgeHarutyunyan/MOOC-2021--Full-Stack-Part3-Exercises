@@ -50,12 +50,28 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const name = request.body.name
-    const number = request.body.number
+
+    const body = request.body
+    const name = body.name
+    const number = body.number
     const id = Math.floor(Math.random() * 1000)
     const newPerson = {name,number,id}
-    console.log(newPerson)
-    notes = notes.concat(newPerson)
+    if (name && number) {
+      if (!notes.find(n => n.name === name)) {
+        notes = notes.concat(newPerson)
+      }
+      else {
+        return response.status(400).json({
+          error: `Person already in contacts list`
+        })
+      }
+    }
+    else {
+      return response.status(400).json({
+        error: `Name or number is missing`
+      })
+    }
+
     response.end()
 })
 
