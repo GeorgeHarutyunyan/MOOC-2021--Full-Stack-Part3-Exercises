@@ -50,10 +50,12 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const person = request.body
-    const id = Math.random() * 1000
-   // const newPerson = { person.name, person.number, id }
-    console.log(person)
+    const name = request.body.name
+    const number = request.body.number
+    const id = Math.floor(Math.random() * 1000)
+    const newPerson = {name,number,id}
+    console.log(newPerson)
+    notes = notes.concat(newPerson)
     response.end()
 })
 
