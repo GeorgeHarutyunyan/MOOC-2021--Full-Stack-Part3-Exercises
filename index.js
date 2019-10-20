@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const PORT = 3005
+const PORT = 3001
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
@@ -47,6 +47,14 @@ app.delete('/api/persons/:id', (request, response) => {
     const note = notes.find(n => n.id === id)
     notes = notes.filter(n => n.id !== note.id)
     response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+    const person = request.body
+    const id = Math.random() * 1000
+   // const newPerson = { person.name, person.number, id }
+    console.log(person)
+    response.end()
 })
 
 
