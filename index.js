@@ -2,6 +2,9 @@ const express = require('express')
 const app = express()
 const PORT = 3001
 
+const cors = require('cors')
+app.use(cors())
+
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
@@ -11,7 +14,9 @@ morgan.token('data', function(req,res) {
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 
-let notes = [
+
+
+let persons = [
   {
     name:"George",
     number: "611",
@@ -29,18 +34,18 @@ let notes = [
   }
 ]
 
-app.get('/api/persons',(request,response) => response.json(notes))
+app.get('/api/persons',(request,response) => response.json(persons))
 
 
 app.get('/info', (request, response) => {
-    response.write(`Phonebook has info for ${notes.length} people\n`)
+    response.write(`Phonebook has info for ${persons.length} people\n`)
     response.write(new Date().toString())
     response.end()
 })
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    const person = notes.find(n => n.id === id)
+    const person = persons.find(n => n.id === id)
     if (person) {
         response.json(person)
     }
@@ -49,8 +54,8 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    const note = notes.find(n => n.id === id)
-    notes = notes.filter(n => n.id !== note.id)
+    const person = persons.find(n => n.id === id)
+    persons = persons.filter(n => n.id !== person.id)
     response.status(204).end()
 })
 
@@ -62,8 +67,8 @@ app.post('/api/persons', (request, response) => {
     const id = Math.floor(Math.random() * 1000)
     const newPerson = {name,number,id}
     if (name && number) {
-      if (!notes.find(n => n.name === name)) {
-        notes = notes.concat(newPerson)
+      if (!persons.find(n => n.name === name)) {
+        persons = persons.concat(newPerson)
       }
       else {
         return response.status(400).json({
