@@ -1,4 +1,5 @@
 const express = require('express')
+const mongoose = require('mongoose')
 const app = express()
 
 
@@ -17,6 +18,21 @@ morgan.token('data', function(req,res) {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 
 
+
+
+// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
+const url =
+  'mongodb+srv://fullstack:sekred@cluster0-ostce.mongodb.net/note-app?retryWrites=true'
+
+mongoose.connect(url, { useNewUrlParser: true })
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  date: Date,
+  important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
 
 let persons = [
   {
