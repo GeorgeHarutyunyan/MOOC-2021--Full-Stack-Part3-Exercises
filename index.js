@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
+const Person = require('./models/person')
 
 
 const cors = require('cors')
@@ -18,57 +19,28 @@ morgan.token('data', function(req,res) {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 
 
-
-
-// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
-const url =
-  'mongodb+srv://fullstack:sekred@cluster0-ostce.mongodb.net/note-app?retryWrites=true'
-
-mongoose.connect(url, { useNewUrlParser: true })
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  date: Date,
-  important: Boolean,
+app.get('/api/persons',(request,response) => {
+  Person.find({}).then(people => {
+    response.json(people.map(person => person.toJSON()))
+  })
 })
 
-const Note = mongoose.model('Note', noteSchema)
-
-let persons = [
-  {
-    name:"George",
-    number: "611",
-    id:1
-  },
-  {
-    name: "Anna",
-    number: "1234",
-    id:2
-  },
-  {
-    name: "Gohar",
-    number: "1111",
-    id:3
-  }
-]
-
-app.get('/api/persons',(request,response) => response.json(persons))
-
-
 app.get('/info', (request, response) => {
-    response.write(`Phonebook has info for ${persons.length} people\n`)
-    response.write(new Date().toString())
-    response.end()
+  Person.find({})
+  .then(people => response.json(`Phonebook has info for ${people.length} people`))
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(n => n.id === id)
-    if (person) {
-        response.json(person)
-    }
-    response.status(404).end()
-})
+    Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person.toJSON())
+      }
+      else {
+        response.status(204).end()
+      }
+    })
+  })
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
@@ -103,5 +75,5 @@ app.post('/api/persons', (request, response) => {
     response.end()
 })
 
-const PORT = process.env.PORT || 3001
-app.listen(PORT,() => console.log(`Listening on port ${PORT}`))
+const PORT = process.env.PORT 
+app.listen(PORT,() => console.log(`Server running on port ${PORT}`))
