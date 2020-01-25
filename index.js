@@ -65,9 +65,6 @@ app.post('/api/persons', (request, response) => {
         .then(savedPerson => savedPerson.toJSON())
         .then(formattedPerson => response.json(formattedPerson))
     .catch(error => console.log(error))
-
-
-    response.end()
 })
 
 const PORT = process.env.PORT 
