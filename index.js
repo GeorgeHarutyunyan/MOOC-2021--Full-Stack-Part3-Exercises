@@ -54,23 +54,18 @@ app.post('/api/persons', (request, response) => {
     const body = request.body
     const name = body.name
     const number = body.number
-    const id = Math.floor(Math.random() * 1000)
-    const newPerson = {name,number,id}
-    if (name && number) {
-      if (!persons.find(n => n.name === name)) {
-        persons = persons.concat(newPerson)
-      }
-      else {
-        return response.status(400).json({
-          error: `Person already in contacts list`
+
+    const person = new Person(
+        {
+            name,
+            number,
         })
-      }
-    }
-    else {
-      return response.status(400).json({
-        error: `Name or number is missing`
-      })
-    }
+
+    person.save()
+        .then(savedPerson => savedPerson.toJSON())
+        .then(formattedPerson => response.json(formattedPerson))
+    .catch(error => next(error))
+
 
     response.end()
 })
