@@ -28,14 +28,17 @@ const errorHandler = (error,request,response,next) => {
 }
 
 app.get('/api/persons',(request,response,next) => {
-  Person.find({}).then(people => {
+  Person.find({})
+  .then(people => {
     response.json(people.map(person => person.toJSON()))
   })
+  .catch(error=> next(error))
 })
 
 app.get('/info', (request, response,next) => {
   Person.find({})
   .then(people => response.json(`Phonebook has info for ${people.length} people`))
+  .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response,next) => {
@@ -48,6 +51,7 @@ app.get('/api/persons/:id', (request, response,next) => {
         response.status(204).end()
       }
     })
+    .catch(error => next(error))
   })
 
 app.delete('/api/persons/:id', (request, response,next) => {
@@ -75,7 +79,7 @@ app.post('/api/persons', (request, response,next) => {
     person.save()
         .then(savedPerson => savedPerson.toJSON())
         .then(formattedPerson => response.json(formattedPerson))
-    .catch(error => console.log(error))
+            .catch(error => next(error))
 })
 
 app.use(errorHandler)
