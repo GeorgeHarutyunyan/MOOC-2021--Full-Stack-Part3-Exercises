@@ -4,6 +4,7 @@ const app = express()
 const Person = require('./models/person')
 
 
+
 const cors = require('cors')
 app.use(cors())
 
@@ -20,9 +21,12 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :d
 
 const errorHandler = (error,request,response,next) => {
   console.log(error)
-  if (error.name === 'CastError' && error.kind === 'ObjectId') {
-    return response.status(400).send({error: 'malformatted id'})
-  }
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+    else if (error.name === 'ValidationError') {
+        return response.status(400).send({error: error.message})
+    }
 
   next(error)
 }
@@ -53,6 +57,7 @@ app.get('/api/persons/:id', (request, response,next) => {
     })
     .catch(error => next(error))
   })
+
 
 app.delete('/api/persons/:id', (request, response,next) => {
     Person.findByIdAndRemove(request.params.id)
